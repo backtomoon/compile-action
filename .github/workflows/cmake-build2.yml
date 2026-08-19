@@ -1,0 +1,29 @@
+name: NcpMode
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+
+  ncp_mode:
+    runs-on: ubuntu-22.04
+    env:
+        BUILD_TARGET: ncp_mode
+        OTBR_MDNS: ${{ matrix.mdns }}
+        OTBR_COVERAGE: 1
+        OTBR_VERBOSE: 1
+        OTBR_OPTIONS: "-DCMAKE_BUILD_TYPE=Debug -DOT_THREAD_VERSION=1.4 -DBUILD_TESTING=OFF -DOTBR_DOC=OFF -DOTBR_BACKBONE_ROUTER=OFF -DOTBR_COVERAGE=OFF -DOTBR_MDNS=openthread -DOT_MLR=OFF -DOTBR_WEB=OFF -DOTBR_REST=OFF -DOTBR_DBUS=OFF -DOTBR_OPENWRT=OFF -DOTBR_FEATURE_FLAGS=OFF -DOTBR_TELEMETRY_DATA_API=OFF -DOTBR_TREL=OFF -DOTBR_TREL_DNSSD=OFF -DOTBR_DHCP6_PD=OFF -DOTBR_NAT64=OFF -DINSTALL_SYSTEMD_UNIT=OFF"
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        repository: openthread/ot-br-posix
+        submodules: recursive
+        persist-credentials: false
+    - name: Bootstrap
+      run: tests/scripts/bootstrap.sh
+    - name: Build
+      run: |
+        OTBR_BUILD_DIR="./build/temp" script/cmake-build ${OTBR_OPTIONS}
