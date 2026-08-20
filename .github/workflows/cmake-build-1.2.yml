@@ -1,0 +1,33 @@
+name: testing reorder static libraries in otbr-agent link list
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+
+  ncp_mode:
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        mdns: ["openthread"]
+    env:
+        BUILD_TARGET: ncp_mode
+        OTBR_MDNS: ${{ matrix.mdns }}
+        OTBR_COVERAGE: 1
+        OTBR_VERBOSE: 1
+        OTBR_OPTIONS: "-DCMAKE_BUILD_TYPE=Debug -DOT_THREAD_VERSION=1.4 -DOTBR_MDNS=${{ matrix.mdns }} -DOTBR_BACKBONE_ROUTER=OFF -DBUILD_TESTING=OFF -DOTBR_COVERAGE=OFF -DOT_MLR=OFF"
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        repository: backtomoon/ot-br-posix
+        submodules: recursive
+        persist-credentials: false
+    - name: Bootstrap
+      run: tests/scripts/bootstrap.sh
+    - name: Build
+      run: |
+        OTBR_BUILD_DIR="./build/temp" script/cmake-build ${OTBR_OPTIONS}
