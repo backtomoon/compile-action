@@ -1,4 +1,4 @@
-name: NcpMode without Backbone Router and Dbus
+name: NcpMode without Backbone Router
 
 on:
   workflow_dispatch:
@@ -13,13 +13,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        mdns: ["mDNSResponder"]
+        mdns: ["openthread"]
     env:
         BUILD_TARGET: ncp_mode
         OTBR_MDNS: ${{ matrix.mdns }}
         OTBR_COVERAGE: 1
         OTBR_VERBOSE: 1
-        OTBR_OPTIONS: "-DCMAKE_BUILD_TYPE=Debug -DOT_THREAD_VERSION=1.4 -DOTBR_MDNS=${{ matrix.mdns }} -DOTBR_BACKBONE_ROUTER=OFF -DOTBR_COVERAGE=ON -DOTBR_DBUS=OFF -DOTBR_FEATURE_FLAGS=ON -DOTBR_TELEMETRY_DATA_API=ON -DOTBR_UNSECURE_JOIN=ON -DOTBR_SRP_ADVERTISING_PROXY=ON -DOTBR_OT_SRP_ADV_PROXY=OFF -DBUILD_TESTING=OFF"
+        OTBR_OPTIONS: "-DCMAKE_BUILD_TYPE=Debug -DOT_THREAD_VERSION=1.4 -DOTBR_MDNS=${{ matrix.mdns }} -DOTBR_BACKBONE_ROUTER=OFF -DOTBR_COVERAGE=ON -DOTBR_DBUS=ON -DOTBR_FEATURE_FLAGS=ON -DOTBR_TELEMETRY_DATA_API=ON -DOTBR_UNSECURE_JOIN=ON -DOTBR_SRP_ADVERTISING_PROXY=ON -DOTBR_OT_SRP_ADV_PROXY=OFF -DBUILD_TESTING=OFF"
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
